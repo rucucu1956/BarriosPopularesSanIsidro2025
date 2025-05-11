@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Barrios Populares de San Isidro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([-34.472, -58.537], 13);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri & contributors'
+    }).addTo(map);
+
+    fetch('barrios_sanisidro.geojson')
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: {
+            color: 'red',
+            weight: 2,
+            fillOpacity: 0.3
+          },
+          onEachFeature: function (feature, layer) {
+            if (feature.properties && feature.properties.nombre) {
+              layer.bindPopup(feature.properties.nombre);
+            }
+          }
+        }).addTo(map);
+      });
+  </script>
+</body>
+</html>
